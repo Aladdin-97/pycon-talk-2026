@@ -1,0 +1,158 @@
+services:
+
+  db:
+    container_name: maktabiya-db
+    hostname: maktabiya-db
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=maktabiya
+      - POSTGRES_PASSWORD=maktabiya
+      - POSTGRES_DB=maktabiya
+    ports:
+      - "127.0.0.1:5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U maktabiya"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  mail-server:
+    container_name: maktabiya-mail-server
+    hostname: maktabiya-mail-server
+    ports:
+    - 8025:8025 # Web UI port
+    - 1025:1025 # SMTP port
+    image: 'axllent/mailpit:v1.29.2'
+    environment:
+      - MP_MAX_MESSAGES=20000 # Maximum number of messages to store
+    networks:
+      - app-network
+
+  app:
+    container_name: maktabiya-app
+    hostname: maktabiya-app
+    restart: unless-stopped
+    env_file: ./.env
+    volumes:
+    # uncomment to use the code from own host
+      - ./maktabiya-app:/app
+      - django-static:/app/static_root_dir
+    image: maktabiya-app:1.2.3
+    build:
+      context: .
+      # comment if don't to use the multi stage build
+      dockerfile: multi_stage_build.Dockerfile
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+    # uncomment to use honcho by Procfile 
+    # command: "honcho start maktabiya-app"
+    ports:
+      # node:container
+      - "8000:8000"
+    networks:
+      - app-network
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:8000/ || exit 1']
+      interval: 10s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      db:
+        condition: service_healthy
+
+  tasks:
+    hostname: maktabiya-tasks
+    restart: always
+    env_file: ./.env
+    volumes:
+    # uncomment to use the code from own host
+      - ./maktabiya-app:/app
+    image: maktabiya-app:1.2.3
+    command: >
+       sh -c "python manage.py qcluster"
+    # uncomment to use honcho by Procfile 
+    # command: "honcho start maktabiya-tasks"
+    # Horizontal scaling for tasks 
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+
+  # Multi Qcluster samples
+  tasks-long:
+    hostname: maktabiya-tasks-long
+    restart: always
+    env_file: ./.env
+    volumes:
+    # uncomment to use the code from own host
+      - ./maktabiya-app:/app
+    image: maktabiya-app:1.2.3
+    command: >
+       sh -c "Q_CLUSTER_NAME=LongTasks python manage.py qcluster"
+    # uncomment to use honcho by Procfile
+    #command: "honcho start maktabiya-tasks-long"
+    deploy:
+      mode: replicated
+      replicas: 0
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+
+  # alternative broker to demo
+  # redis:
+  #   container_name: redis
+  #   hostname: redis
+  #   image: docker.io/bitnami/redis
+  #   environment:
+  #     - ALLOW_EMPTY_PASSWORD=yes
+  #     - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+  #   ports:
+  #     - '6379:6379'   
+  #   networks:
+  #     - app-network
+
+
+  # db-admin:
+  #   container_name: maktabiya-db-admin
+  #   hostname: maktabiya-db-admin
+  #   image: dpage/pgadmin4:latest
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@AladinStudioX.app
+  #     PGADMIN_DEFAULT_PASSWORD: maktabiya
+  #     PGADMIN_CONFIG_SERVER_MODE: "False"
+  #   ports:
+  #     - "8081:80"
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./db/server.json:/pgadmin4/servers.json:ro
+  #     - ./db/pgpass:/pgpass:ro
+  #   restart: always
+  #   networks:
+  #     - app-network
+
+
+volumes:
+  db-data:
+  django-static:
+networks:
+  app-network:
+    driver: bridge
+ 

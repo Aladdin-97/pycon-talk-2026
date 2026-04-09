@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{% block title %}Maktabiya | MyDesk{% endblock %}</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'app_core/img/logo.png' %}" >
+
+    <link  rel="stylesheet" href="{% static 'app_core/css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'app_core/css/bootstrap.icons.css' %}" >
+    <link rel="stylesheet" href="{% static 'app_core/css/flatpickr.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'booking/css/base.css' %}" >
+    <!-- Beta release Badge on App css -->
+    <link rel="stylesheet" href="{% static 'app_core/css/custom.css' %}" >
+
+    <script src="{% static 'app_core/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'app_core/js/jquery-3.7.0.slim.min.js' %}" ></script>
+    <script src="{% static 'app_core/js/htmx.min.js' %}"></script>
+    <script src="{% static 'app_core/js/flatpickr.js' %}"></script>
+	<script src="{% static 'app_core/js/hyperscript.min.js' %}"></script>
+
+
+    {% block header %}
+
+    {% endblock %}
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<div class="bg-white m-auto home-container" style="max-width: 52rem;">
+    {% include 'nav.html' %}
+    {# toast #}
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div
+                id="liveToast"
+                class="toast"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+        >
+            <div class="alert alert-success m-0"></div>
+        </div>
+    </div>
+    {% block body %}{% endblock %}
+</div>
+<div class="modal fade" id="confirm-booking">
+    <div class="modal-dialog" id="dialog">
+
+    </div>
+</div>
+
+
+
+<div class="container">
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <a class="float-left btn btn-outline-light text-black btn-sm" href="{{ AUTHOR_URL }}" target="_blank">&#xa9;&#xfe0f; Developed By: {{ AUTHOR }}</a>
+    
+        <a class="float-right btn btn-outline-light text-black btn-sm" href="{{ APP_GITHUB_URL }}" target="_blank">&#128187; GitHub: {{ APP_NAME }} {{ VERSION }}</a>
+
+      {% block footer %}
+
+    {% endblock %}
+    </footer>
+  </div>
+<!-- Beta release Badge on App -->
+
+<div class="ribbon">
+  <div class="wrap">
+    <span class="ribbon6">{{ BADGE }}</span>
+  </div>
+</div>
+<!-- Beta release Badge on App -->
+
+
+
+</body>
+</html>

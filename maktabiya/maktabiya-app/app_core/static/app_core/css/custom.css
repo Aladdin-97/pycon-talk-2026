@@ -1,0 +1,194 @@
+/* ============================================================
+   Maktabiya - Custom / App-core CSS
+   ============================================================ */
+
+/* ── Beta Ribbon ── */
+.ribbon {
+  height: 188px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.wrap {
+  width: 100%;
+  height: 188px;
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  overflow: hidden;
+}
+
+.ribbon6 {
+  width: 180px;
+  height: 34px;
+  line-height: 34px;
+  position: fixed;
+  top: 24px;
+  right: -42px;
+  z-index: 2;
+  overflow: hidden;
+  transform: rotate(45deg);
+  border: 1px dashed rgba(255,255,255,0.4);
+  box-shadow: 0 0 0 2px #D97706, 0px 18px 5px -16px rgba(0, 0, 0, 0.3);
+  background: #F59E0B;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #1a1000;
+  font-family: 'DM Sans', sans-serif;
+  text-transform: uppercase;
+}
+
+/* ── Search Desk Page ── */
+.desk-search-header {
+  padding: 28px 0 20px;
+}
+
+.desk-search-header .greeting {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+  font-family: 'DM Mono', monospace;
+}
+
+.desk-search-header h4 {
+  margin: 0;
+  font-size: 22px;
+}
+
+/* ── Search form card ── */
+.search-card {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin: 16px 0 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Desk grid ── */
+.desks-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 576px) {
+  .desks-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.desk-item {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  min-height: 70px;
+}
+
+.desk-item.available:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.desk-item.booked {
+  background: var(--color-bg);
+  opacity: 0.7;
+}
+
+.desk-item svg {
+  height: 2rem !important;
+  width: 2rem !important;
+}
+
+/* ── Overlay loading indicator ── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 17, 23, 0.2);
+  backdrop-filter: blur(2px);
+  z-index: 1050;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay::after {
+  content: '';
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── My Bookings page tweaks ── */
+.bookings-header {
+  padding: 24px 0 4px;
+}
+
+/* ── Profile avatar area ── */
+.avatar-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--color-border);
+  margin-bottom: 16px;
+}
+
+.avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ── Toggle / Checkbox ── */
+.form-check-input {
+  width: 36px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--color-accent);
+  border-radius: 20px;
+}
+
+/* ── Navbar toggler ── */
+.navbar-toggler {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+}
+
+.navbar-toggler:focus { box-shadow: none; }
+
+/* ── Flatpickr override ── */
+.flatpickr-calendar {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border: 1.5px solid var(--color-border) !important;
+  font-family: 'DM Sans', sans-serif !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  background: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+}
+
+/* ── Section label above results ── */
+.results-label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.results-label b { color: var(--color-text-primary); }

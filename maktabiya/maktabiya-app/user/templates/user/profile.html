@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block title %} Maktabiya | Profile{% endblock %}
+
+{% block body %}
+    <div class="p-4">
+        <div class="mb-4">
+            <h5 class="mb-1">Profile</h5>
+            <p class="text-muted m-0">Manage your account preferences</p>
+        </div>
+
+        {% if messages %}
+        <div class="alert alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+                <div class="{% if message.tags %}{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Info section -->
+            <div style="background: var(--color-bg); border: 1.5px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 20px;">
+                <div class="profile-field px-4">
+                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                    <p>{{ user.first_name }}</p>
+                </div>
+                <div class="profile-field px-4">
+                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                    <p>{{ user.last_name }}</p>
+                </div>
+                <div class="profile-field px-4">
+                    <label for="{{ form.email.id_for_label }}">Email</label>
+                    <p>{{ user.email }}</p>
+                </div>
+                <div class="profile-field px-4" style="border-bottom: none;">
+                    <label for="{{ form.last_login.id_for_label }}">Last Login</label>
+                    <p style="font-family: var(--font-mono); font-size: 13px;">{{ user.last_login }}</p>
+                </div>
+            </div>
+
+            <!-- Preferences section -->
+            <div style="background: var(--color-bg); border: 1.5px solid var(--color-border); border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 20px;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <label class="form-check-label mb-1" for="{{ form.booking_visible.id_for_label }}" style="font-size:14px; font-weight:600; color: var(--color-text-primary);">Visible to others</label>
+                        <p style="font-size:13px; color: var(--color-text-muted); margin:0;">Let colleagues see which desk you've booked</p>
+                    </div>
+                    <div class="form-check form-switch mb-0 ps-0">
+                        <input class="form-check-input" type="checkbox" role="switch" name="booking_visible"
+                               {% if user.booking_visible %} checked {% endif %}
+                               style="width:40px; height:22px; cursor:pointer;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avatar -->
+            <div class="mb-4">
+                <label for="{{ form.avatar.id_for_label }}" style="margin-bottom: 8px;">Avatar</label>
+                {{ form.avatar|add_class:'form-control' }}
+            </div>
+
+            <input type="submit" class="btn btn-outline-primary" value="Save Changes">
+        </form>
+    </div>
+{% endblock %}

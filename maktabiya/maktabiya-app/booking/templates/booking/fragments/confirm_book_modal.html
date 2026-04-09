@@ -1,0 +1,50 @@
+{% load widget_tweaks %}
+{% load static %}
+<div class="modal-content">
+    <div class="modal-header">
+        <div>
+            <h5 class="modal-title mb-0">Confirm Booking</h5>
+            <p style="font-size:12px; color: var(--color-text-muted); margin:2px 0 0;">Review your desk reservation details</p>
+        </div>
+        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form hx-post="{% url 'booking:book' desk_id=desk.id room_id=room.id office_id=office.id %}" id="book-form" method="post">
+            {% csrf_token %}
+
+            <!-- Confirmation summary -->
+            <div style="background: var(--color-bg); border: 1.5px solid var(--color-border); border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 16px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color: var(--color-text-muted); margin-bottom:3px; display:block;">Date</label>
+                        <input disabled class="form-control" type="text" name="date" value="{{ date }}"
+                               style="background: transparent; border: none; padding: 0; font-weight: 600; font-size: 14px; color: var(--color-text-primary); height: auto;">
+                    </div>
+                    <div>
+                        <label style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color: var(--color-text-muted); margin-bottom:3px; display:block;">Office</label>
+                        <input disabled class="form-control" type="text" required name="office_id" value="{{ office.name }}"
+                               style="background: transparent; border: none; padding: 0; font-weight: 600; font-size: 14px; color: var(--color-text-primary); height: auto;">
+                    </div>
+                    <div>
+                        <label style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color: var(--color-text-muted); margin-bottom:3px; display:block;">Room</label>
+                        <input disabled class="form-control" type="text" required name="room_id" value="{{ room.name }}"
+                               style="background: transparent; border: none; padding: 0; font-weight: 600; font-size: 14px; color: var(--color-text-primary); height: auto;">
+                    </div>
+                    <div>
+                        <label style="font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color: var(--color-text-muted); margin-bottom:3px; display:block;">Desk</label>
+                        <input disabled class="form-control" type="text" required name="desk_id" value="{{ desk.name }}"
+                               style="background: transparent; border: none; padding: 0; font-weight: 600; font-size: 14px; color: var(--color-text-primary); height: auto;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="margin: 0 -20px -20px; padding: 14px 20px;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-success" type="submit" id="book-btn">
+                    Confirm Booking
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

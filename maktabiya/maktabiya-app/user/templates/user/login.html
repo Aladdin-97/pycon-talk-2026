@@ -1,0 +1,87 @@
+{% extends "registration/base.html" %}
+{% block title %} Maktabiya | MyDesk {% endblock %}
+{% load i18n jazzmin %}
+{% get_jazzmin_settings request as jazzmin_settings %}
+{% get_jazzmin_ui_tweaks as jazzmin_ui %}
+
+{% block content %}
+    <h5 class="login-box-msg font-weight-normal" >
+    <!-- Bootstrap 5 Fix -->
+    <!--
+    Welcome to the <a data-bs-toggle="collapse" data-bs-target="#maktabiya" role="button"
+                    aria-expanded="false" aria-controls="maktabiya">
+                    {{ APP_NAME }}!
+                    </a>
+    <br style="clear:both;"/>
+    
+    A Desk Booking <a data-bs-toggle="collapse" data-bs-target="#maktabiya-dev" role="button" aria-expanded="false" aria-controls="maktabiya">App.</a> 
+    -->
+    Welcome to the <a data-toggle="collapse" href="#maktabiya" role="button" aria-expanded="false" aria-controls="maktabiya">{{ APP_NAME }}!</a>
+    <br style="clear:both;"/>
+    A Desk Booking <a data-toggle="collapse" href="#maktabiya-dev" role="button" aria-expanded="false" aria-controls="maktabiya">App.</a> 
+    </h5>
+            
+    <div class="collapse" id="maktabiya">
+        
+        <div class="card card-body text-dark">
+            {{ APP_DESC }}
+        </div>
+        <br>
+    </div>
+    
+
+    <form action="" method="post" action="?next={{ request.GET.next }}">
+        {% csrf_token %}
+        {% if msg %}
+            <div class="callout callout-danger">
+                <p>{{ msg }}</p>
+            </div>
+        {% endif %}
+        
+        <div class="input-group mb-3">
+            <input type="text" name="username" class="form-control" placeholder="{{ form.username.label }}" required>
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-user"></span>
+                </div>
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <input type="password" name="password" class="form-control" placeholder="{{ form.password.label }}" required>
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-lock"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button type="submit" class="btn {{ jazzmin_ui.button_classes.warning }} btn-block text-dark">
+                    {% trans "Log in" %}
+                </button>
+            </div>
+        </div>
+    </form>
+    <div class="collapse" id="maktabiya-dev">
+        <br>
+        <div class="card-body">
+           <p>
+                <a class="float-left btn btn-outline-dark" role="button" aria-pressed="true" target="_blank" href="{{ AUTHOR_URL }}">Author: {{ AUTHOR }}</a>
+                <a class="float-right btn btn-outline-dark" role="button" aria-pressed="true" target="_blank" href="{{ APP_GITHUB_URL }}">Version: {{VERSION}}</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Beta release Badge on App -->
+    <!-- Bootstrap 5 Fix -->
+    <!--<a data-bs-toggle="collapse" data-bs-target="#maktabiya-dev" role="button" aria-expanded="false" aria-controls="maktabiya">-->
+    <a data-toggle="collapse" href="#maktabiya-dev" role="button" aria-expanded="false" aria-controls="maktabiya">
+    <div class="ribbon">
+        <div class="wrap">
+        <span class="ribbon6">{{ BADGE }}</span>
+        </div>
+    </div>
+    </a>
+  <!-- Beta release Badge on App -->
+{% endblock %}
+

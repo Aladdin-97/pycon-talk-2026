@@ -1,0 +1,956 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}Dashboard | {{ site_title }}{% endblock %}
+{% block content_title %}{% endblock %}{# hide jazzmin default header #}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+/*@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap');
+/* offline import for DM Sans and DM Mono */
+/* dm-sans-regular */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/static/booking/css/fonts/dm-sans-v17-latin_latin-ext-regular.woff2') format('woff2');
+}
+
+/* dm-mono-regular */
+@font-face {
+  font-family: 'DM Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/static/booking/css/fonts/dm-mono-v16-latin_latin-ext-regular.woff2') format('woff2');
+}
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════════ */
+:root {
+  --bg:          #F4F6F9;
+  --surface:     #FFFFFF;
+  --border:      #E3E8EF;
+  --border-2:    #C8D2DF;
+  --text:        #0D1117;
+  --text-2:      #4B5768;
+  --text-3:      #8A96A8;
+  --accent:      #2563EB;
+  --accent-bg:   #EEF3FF;
+  --accent-bd:   #C7D9FF;
+  --green:       #16A34A;
+  --green-bg:    #ECFDF5;
+  --green-bd:    #A7F3D0;
+  --yellow:      #B45309;
+  --yellow-bg:   #FFFBEB;
+  --yellow-bd:   #FDE68A;
+  --red:         #DC2626;
+  --red-bg:      #FFF1F1;
+  --red-bd:      #FECACA;
+  --neutral-bg:  #F8FAFC;
+  --r:           12px;
+  --r-sm:        7px;
+  --r-xs:        5px;
+  --sh:          0 1px 3px rgba(13,17,23,.07),0 1px 2px rgba(13,17,23,.04);
+  --sh-md:       0 4px 16px rgba(13,17,23,.08),0 2px 6px rgba(13,17,23,.04);
+  --sh-lg:       0 8px 32px rgba(13,17,23,.10),0 2px 8px rgba(13,17,23,.05);
+  --t:           .16s ease;
+  --font:        'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono:        'DM Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+/* ═══════════════════════════════════════════════════
+   RESET
+═══════════════════════════════════════════════════ */
+#db * { box-sizing: border-box; }
+#db { font-family: var(--font); color: var(--text); }
+
+/* ═══════════════════════════════════════════════════
+   LAYOUT - full-bleed inside jazzmin content area
+═══════════════════════════════════════════════════ */
+#db {
+  background: var(--bg);
+  min-height: 80vh;
+  padding: 0;
+  margin: -20px -15px 0; /* pull back jazzmin padding */
+  width: calc(100% + 30px);
+}
+
+.db-inner {
+  padding: 28px 28px 56px;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE HEADER
+═══════════════════════════════════════════════════ */
+.db-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.db-page-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.4px;
+  color: var(--text);
+  margin: 0 0 2px;
+  line-height: 1.2;
+}
+
+.db-page-sub {
+  font-size: 13px;
+  color: var(--text-3);
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════
+   SECTION PANEL
+═══════════════════════════════════════════════════ */
+.db-panel {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--sh);
+  margin-bottom: 24px;
+  overflow: visible;
+}
+
+.db-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1.5px solid var(--border);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.db-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -.1px;
+}
+
+.db-panel-icon {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.db-panel-icon--blue   { background: var(--accent-bg); color: var(--accent); }
+.db-panel-icon--green  { background: var(--green-bg);  color: var(--green);  }
+
+.db-panel-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.db-panel-body {
+  padding: 20px;
+}
+
+/* ═══════════════════════════════════════════════════
+   FORM CONTROLS
+═══════════════════════════════════════════════════ */
+
+/* native select */
+.db-sel {
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  height: 32px;
+  padding: 0 28px 0 10px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A96A8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  cursor: pointer;
+  transition: border-color var(--t), box-shadow var(--t);
+}
+.db-sel:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+}
+
+/* ── custom multiselect ── */
+.db-ms {
+  position: relative;
+  display: inline-block;
+}
+
+.db-ms-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  height: 32px;
+  padding: 0 10px;
+  min-width: 140px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color var(--t), box-shadow var(--t);
+  white-space: nowrap;
+}
+.db-ms-trigger:hover { border-color: var(--border-2); }
+.db-ms-trigger.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+}
+
+.db-ms-trigger-text { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+
+.db-ms-caret {
+  flex-shrink: 0;
+  width: 14px; height: 14px;
+  transition: transform var(--t);
+  color: var(--text-3);
+}
+.db-ms-trigger.active .db-ms-caret { transform: rotate(180deg); }
+
+/* badge showing count when not all selected */
+.db-ms-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 99px;
+  padding: 1px 6px;
+  line-height: 1.6;
+  display: none;
+}
+.db-ms-badge.visible { display: inline-block; }
+
+.db-ms-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  z-index: 9999;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  box-shadow: var(--sh-lg);
+  min-width: 220px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 5px;
+}
+.db-ms-menu.open { display: block; }
+
+/* divider between "All" row and individual items */
+.db-ms-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.db-ms-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: var(--r-xs);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-2);
+  transition: background var(--t), color var(--t);
+  user-select: none;
+}
+.db-ms-row:hover { background: var(--bg); color: var(--text); }
+.db-ms-row--all { font-weight: 600; color: var(--text); }
+
+.db-ms-row input[type="checkbox"] {
+  width: 15px; height: 15px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+  pointer-events: none; /* row click handles toggle */
+  margin: 0;
+}
+
+/* ── refresh button ── */
+.db-btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 1.5px solid var(--accent-bd);
+  border-radius: var(--r-sm);
+  height: 32px;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: all var(--t);
+  white-space: nowrap;
+}
+.db-btn-refresh:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.db-btn-refresh svg { flex-shrink: 0; }
+.db-btn-refresh.spin svg { animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── timestamp pill ── */
+.db-ts {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+  background: var(--neutral-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: 2px 10px;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════
+   STAT CARDS GRID
+═══════════════════════════════════════════════════ */
+.db-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 768px) { .db-cards { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 420px) { .db-cards { grid-template-columns: 1fr; } }
+
+.db-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 18px 16px;
+  box-shadow: var(--sh);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow var(--t), border-color var(--t), transform var(--t);
+  position: relative;
+  overflow: hidden;
+}
+.db-card:hover {
+  box-shadow: var(--sh-md);
+  border-color: var(--border-2);
+  transform: translateY(-1px);
+}
+
+/* coloured top stripe */
+.db-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--r) var(--r) 0 0;
+  background: var(--border);
+}
+.db-card--green::before  { background: var(--green); }
+.db-card--yellow::before { background: #F59E0B; }
+.db-card--red::before    { background: var(--red); }
+.db-card--blue::before   { background: var(--accent); }
+.db-card--neutral::before{ background: var(--border-2); }
+
+.db-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.db-card-icon {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.db-card--green  .db-card-icon { background: var(--green-bg);  color: var(--green);  }
+.db-card--yellow .db-card-icon { background: var(--yellow-bg); color: var(--yellow); }
+.db-card--red    .db-card-icon { background: var(--red-bg);    color: var(--red);    }
+.db-card--blue   .db-card-icon { background: var(--accent-bg); color: var(--accent); }
+.db-card--neutral .db-card-icon { background: var(--bg); color: var(--text-3); }
+
+.db-card-body { flex: 1; }
+
+.db-card-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin: 0 0 5px;
+}
+
+.db-card-value {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.db-card--green  .db-card-value { color: var(--green);  }
+.db-card--yellow .db-card-value { color: var(--yellow); }
+.db-card--red    .db-card-value { color: var(--red);    }
+.db-card--blue   .db-card-value { color: var(--accent); }
+
+.db-card-sub {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  font-family: var(--mono);
+  margin: 6px 0 0;
+  line-height: 1.5;
+}
+
+/* ── loading shimmer ── */
+.db-card.loading .db-card-value {
+  background: linear-gradient(90deg,#eef1f5 25%,#f5f7fa 50%,#eef1f5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 5px;
+  color: transparent !important;
+  min-width: 50px;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ═══════════════════════════════════════════════════
+   STATUS DOT (for queue colour indicator in header)
+═══════════════════════════════════════════════════ */
+.db-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.db-dot--green  { background: var(--green); box-shadow: 0 0 0 3px var(--green-bg); }
+.db-dot--yellow { background: #F59E0B;      box-shadow: 0 0 0 3px var(--yellow-bg); }
+.db-dot--red    { background: var(--red);   box-shadow: 0 0 0 3px var(--red-bg); }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="db">
+<div class="db-inner">
+
+  <!-- Page header -->
+  <div class="db-page-header">
+    <div>
+      <h1 class="db-page-title">Dashboard</h1>
+      <p class="db-page-sub">Live overview of bookings and task queues</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 1 - BOOKINGS
+  ══════════════════════════════════════════════ -->
+  <div class="db-panel" id="booking-panel">
+    <div class="db-panel-head">
+      <h2 class="db-panel-title">
+        <span class="db-panel-icon db-panel-icon--blue">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"/>
+          </svg>
+        </span>
+        Booking Overview
+      </h2>
+
+      <div class="db-panel-controls">
+        <!-- Office filter -->
+        <select class="db-sel" id="b-office" onchange="fetchBookings()">
+          <option value="all">All Offices</option>
+        </select>
+
+        <!-- Date range filter -->
+      <select class="db-sel" id="b-range" onchange="fetchBookings()">
+        <option value="yesterday">Yesterday</option>
+        <option value="today" selected>Today</option>
+        <option value="tomorrow">Tomorrow</option>
+      </select>
+
+        <span class="db-ts" id="b-ts" title="Last updated">-</span>
+
+        <button class="db-btn-refresh" id="b-refresh" onclick="fetchBookings(true)" title="Refresh bookings">
+          <svg id="b-ref-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <div class="db-panel-body">
+      <div class="db-cards" id="b-cards">
+        <!-- skeleton cards -->
+        <div class="db-card db-card--neutral loading">
+          <div class="db-card-top"><div class="db-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div></div>
+          <div class="db-card-body"><p class="db-card-label">Offices</p><p class="db-card-value">0</p></div>
+        </div>
+        <div class="db-card db-card--blue loading">
+          <div class="db-card-top"><div class="db-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div></div>
+          <div class="db-card-body"><p class="db-card-label">Rooms</p><p class="db-card-value">0</p></div>
+        </div>
+        <div class="db-card db-card--red loading">
+          <div class="db-card-top"><div class="db-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"/></svg></div></div>
+          <div class="db-card-body"><p class="db-card-label">Total Desks</p><p class="db-card-value">0</p></div>
+        </div>
+        <div class="db-card db-card--yellow loading">
+          <div class="db-card-top"><div class="db-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div>
+          <div class="db-card-body"><p class="db-card-label">Desks Booked</p><p class="db-card-value">0</p></div>
+        </div>
+        <div class="db-card db-card--green loading">
+          <div class="db-card-top"><div class="db-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+          <div class="db-card-body"><p class="db-card-label">Desks Free</p><p class="db-card-value">0</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 2 - TASKS
+  ══════════════════════════════════════════════ -->
+  <div class="db-panel" id="task-panel">
+    <div class="db-panel-head">
+      <h2 class="db-panel-title">
+        <span class="db-panel-icon db-panel-icon--green">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </span>
+        Task Status
+        <span class="db-dot db-dot--green" id="t-health-dot" title="Queue health"></span>
+      </h2>
+
+      <div class="db-panel-controls">
+
+        <!-- Cluster multiselect -->
+        <div class="db-ms" id="ms-cluster">
+          <div class="db-ms-trigger" id="ms-cluster-trigger" onclick="msToggle('cluster')" tabindex="0">
+            <span class="db-ms-trigger-text" id="ms-cluster-label">All Clusters</span>
+            <span class="db-ms-badge" id="ms-cluster-badge"></span>
+            <svg class="db-ms-caret" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <div class="db-ms-menu" id="ms-cluster-menu">
+            <div class="db-ms-row db-ms-row--all" onclick="msToggleAll('cluster')">
+              <input type="checkbox" id="ms-cluster-all" checked>
+              <span>All Clusters</span>
+            </div>
+            <div class="db-ms-divider"></div>
+          </div>
+        </div>
+
+        <span class="db-ts" id="t-ts" title="Last updated">-</span>
+
+        <button class="db-btn-refresh" id="t-refresh" onclick="fetchTasks(true)" title="Refresh tasks">
+          <svg id="t-ref-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+
+    <div class="db-panel-body">
+      <div class="db-cards" id="t-cards">
+        <div class="db-card db-card--neutral loading">
+          <div class="db-card-top"><div class="db-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div></div>
+          <div class="db-card-body"><p class="db-card-label">Queued</p><p class="db-card-value">0</p></div>
+        </div>
+        <div class="db-card db-card--green loading">
+          <div class="db-card-top"><div class="db-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div>
+          <div class="db-card-body"><p class="db-card-label">Succeeded</p><p class="db-card-value">0</p></div>
+        </div>
+        <div class="db-card db-card--green loading">
+          <div class="db-card-top"><div class="db-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div></div>
+          <div class="db-card-body"><p class="db-card-label">Failed</p><p class="db-card-value">0</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /db-inner -->
+</div><!-- /db -->
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   DASHBOARD JS
+   - Separate fetch/refresh per section
+   - Fixed multiselect (toggle all, individual, badge sync)
+   - Fixed booking filters sent correctly to backend
+════════════════════════════════════════════════════════════ */
+
+const BOOKING_URL = "{% url 'app_core:admin-dashboard-booking' %}";
+const TASK_URL    = "{% url 'app_core:admin-dashboard-tasks' %}";
+const AUTO_MS     = 10000; // 10s
+
+/* ── multiselect state ─────────────────────────────────────── */
+// kind = "cluster"
+// items: Array of { value, label }
+const msState = {
+  cluster: { items: [], selected: new Set() },
+};
+
+function msToggle(kind) {
+  const menu    = document.getElementById(`ms-${kind}-menu`);
+  const trigger = document.getElementById(`ms-${kind}-trigger`);
+  const isOpen  = menu.classList.contains('open');
+  // close all first
+  document.querySelectorAll('.db-ms-menu.open').forEach(m => m.classList.remove('open'));
+  document.querySelectorAll('.db-ms-trigger.active').forEach(t => t.classList.remove('active'));
+  if (!isOpen) {
+    menu.classList.add('open');
+    trigger.classList.add('active');
+  }
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.db-ms')) {
+    document.querySelectorAll('.db-ms-menu.open').forEach(m => m.classList.remove('open'));
+    document.querySelectorAll('.db-ms-trigger.active').forEach(t => t.classList.remove('active'));
+  }
+});
+
+/**
+ * Toggles all items in a category (e.g., 'status', 'assignee')
+ */
+function msToggleAll(kind) {
+  const state = msState[kind];
+  const allBox = document.getElementById(`ms-${kind}-all`);
+  
+  // Determine if we are selecting or deselecting based on current state
+  const allSelected = state.selected.size === state.items.length;
+  
+  if (allSelected) {
+    state.selected.clear();
+  } else {
+    state.items.forEach(i => state.selected.add(i.value));
+  }
+  
+  // Update the "Select All" checkbox visual
+  allBox.checked = !allSelected;
+  
+  // Re-render the full list (since every item changed)
+  msRenderItems(kind);
+  msSyncLabel(kind);
+  fetchTasks();
+}
+
+/**
+ * Toggles a single item. Handles the event to prevent "double-toggle" 
+ * when clicking the checkbox vs the row.
+ */
+function msToggleItem(kind, value, event) {
+  const state = msState[kind];
+  const menu = document.getElementById(`ms-${kind}-menu`);
+  const row = menu.querySelector(`.db-ms-row[data-val="${value}"]`);
+  const checkbox = row.querySelector('input[type="checkbox"]');
+
+  // Prevent event bubbling if necessary
+  if (event) {
+    // If the click came from the checkbox, let the checkbox handle its own state
+    // and we just sync our internal Set to it.
+    if (event.target.type === 'checkbox') {
+      if (event.target.checked) {
+        state.selected.add(value);
+      } else {
+        state.selected.delete(value);
+      }
+    } else {
+      // If the click came from the row/text, we manually toggle everything
+      if (state.selected.has(value)) {
+        state.selected.delete(value);
+        checkbox.checked = false;
+      } else {
+        state.selected.add(value);
+        checkbox.checked = true;
+      }
+    }
+  }
+
+  // Update the "Select All" checkbox state
+  const allBox = document.getElementById(`ms-${kind}-all`);
+  allBox.checked = (state.selected.size === state.items.length);
+
+  msSyncLabel(kind);
+  fetchTasks();
+}
+
+/**
+ * Rebuilds the menu items from scratch.
+ */
+function msRenderItems(kind) {
+  const state = msState[kind];
+  const menu = document.getElementById(`ms-${kind}-menu`);
+  
+  // Remove existing item rows (keep "all" row + divider)
+  menu.querySelectorAll('.db-ms-row:not(.db-ms-row--all), .db-ms-divider:not(:first-of-type)')
+      .forEach(el => el.remove());
+
+  // Build the list
+  state.items.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'db-ms-row';
+    row.setAttribute('data-val', item.value);
+    
+    const checked = state.selected.has(item.value) ? 'checked' : '';
+    row.innerHTML = `<input type="checkbox" ${checked}><span>${item.label}</span>`;
+    
+    // Pass the event object to handle the click logic properly
+    row.addEventListener('click', function(e) { 
+      msToggleItem(kind, item.value, e); 
+    });
+    
+    menu.appendChild(row);
+  });
+
+  // Sync the "All" checkbox
+  const allBox = document.getElementById(`ms-${kind}-all`);
+  if (allBox) {
+    allBox.checked = (state.selected.size === state.items.length && state.items.length > 0);
+  }
+}
+function msSyncLabel(kind) {
+  const state  = msState[kind];
+  const label  = document.getElementById(`ms-${kind}-label`);
+  const badge  = document.getElementById(`ms-${kind}-badge`);
+  const total  = state.items.length;
+  const sel    = state.selected.size;
+  const defaultLabel = 'All QClusters';
+
+  if (sel === 0 || sel === total || total === 0) {
+    label.textContent = defaultLabel;
+    badge.classList.remove('visible');
+  } else {
+    label.textContent = defaultLabel;
+    badge.textContent = sel;
+    badge.classList.add('visible');
+  }
+}
+
+function msPopulate(kind, newItems) {
+  const state = msState[kind];
+  const existingValues = new Set(state.items.map(i => i.value));
+  let changed = false;
+
+  newItems.forEach(val => {
+    if (!existingValues.has(val)) {
+      state.items.push({ value: val, label: val });
+      state.selected.add(val); // default: all selected
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    msRenderItems(kind);
+    msSyncLabel(kind);
+  }
+}
+
+function msGetSelected(kind) {
+  const state = msState[kind];
+  // if all selected → send nothing (backend treats empty = all)
+  if (state.selected.size === state.items.length || state.items.length === 0) {
+    return [];
+  }
+  return [...state.selected];
+}
+
+/* ── booking section ──────────────────────────────────────── */
+function buildBookingParams() {
+  const p = new URLSearchParams();
+  p.set('office_id',  document.getElementById('b-office').value || 'all');
+  p.set('date_range', document.getElementById('b-range').value  || 'today');
+  // console.log(document.getElementById('b-range').value)
+  return p;
+}
+
+function populateOffices(list) {
+  const sel = document.getElementById('b-office');
+  const existing = new Set([...sel.options].map(o => o.value));
+  list.forEach(o => {
+    if (!existing.has(String(o.id))) {
+      const opt = document.createElement('option');
+      opt.value       = String(o.id);
+      opt.textContent = o.name;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+const BOOKING_ICONS = {
+  offices: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
+  rooms:   `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+  total:   `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25"/></svg>`,
+  booked:  `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  free:    `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+};
+
+function makeCard(color, iconSvg, label, value, sub) {
+  const subHtml = sub ? `<p class="db-card-sub">${sub}</p>` : '';
+  return `
+    <div class="db-card db-card--${color}">
+      <div class="db-card-top">
+        <div class="db-card-icon">${iconSvg}</div>
+      </div>
+      <div class="db-card-body">
+        <p class="db-card-label">${label}</p>
+        <p class="db-card-value">${value}</p>
+        ${subHtml}
+      </div>
+    </div>`;
+}
+
+function renderBookingCards(d) {
+  document.getElementById('b-cards').innerHTML =
+    makeCard('neutral',    BOOKING_ICONS.offices, 'Offices',      d.offices,      null) +
+    makeCard('blue',    BOOKING_ICONS.rooms,   'Rooms',        d.rooms,        null) +
+    makeCard('red', BOOKING_ICONS.total,   'Total Desks',  d.desks_total,  null) +
+    makeCard('yellow',  BOOKING_ICONS.booked,  'Desks Booked', d.desks_booked, null) +
+    makeCard('green',   BOOKING_ICONS.free,    'Desks Free',   d.desks_free,   null);
+}
+
+async function fetchBookings(manual = false) {
+  if (manual) animateBtn('b-refresh', 'b-ref-icon');
+
+  try {
+    const url = BOOKING_URL + '?' + buildBookingParams().toString();
+    const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+    if (!res.ok) throw new Error(res.statusText);
+    const d = await res.json();
+
+    renderBookingCards(d);
+
+    if (d.offices_list && d.offices_list.length) {
+      populateOffices(d.offices_list);
+    }
+
+    document.getElementById('b-ts').textContent = nowTime();
+  } catch (err) {
+    console.error('[booking]', err);
+  }
+}
+
+/* ── task section ────────────────────────────────────────── */
+function buildTaskParams() {
+  const p = new URLSearchParams();
+  msGetSelected('cluster').forEach(v => p.append('clusters[]', v));
+  return p;
+}
+
+const TASK_ICONS = {
+  queued:  `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
+  success: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+  failed:  `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+};
+
+function renderTaskCards(d) {
+  const qColor = d.queued_color || 'yellow';
+  const failColor = d.failed > 0 ? 'red' : 'blue';
+
+  // per-cluster breakdown as subtitle on queued card
+  const clusterSub = Object.keys(d.queued_by_cluster || {}).length
+    ? Object.entries(d.queued_by_cluster).map(([k, v]) => `${k}: ${v}`).join('  ·  ')
+    : null;
+  const failSub = d.failed_by_cluster && Object.keys(d.failed_by_cluster).length
+    ? Object.entries(d.failed_by_cluster).map(([k, v]) => `${k}: ${v}`).join('  ·  ')
+    : null;
+  const successSub = d.success_by_cluster && Object.keys(d.success_by_cluster).length
+    ? Object.entries(d.success_by_cluster).map(([k, v]) => `${k}: ${v}`).join('  ·  ')
+    : null;
+
+  document.getElementById('t-cards').innerHTML =
+    makeCard(qColor,    TASK_ICONS.queued,  'Queued',    d.queued,  clusterSub) +
+    makeCard('green',   TASK_ICONS.success, 'Succeeded', d.success, successSub) +
+    makeCard(failColor, TASK_ICONS.failed,  'Failed',    d.failed,  failSub);
+
+  // health dot in panel header
+  const dot = document.getElementById('t-health-dot');
+  dot.className = `db-dot db-dot--${qColor}`;
+}
+
+async function fetchTasks(manual = false) {
+  if (manual) animateBtn('t-refresh', 't-ref-icon');
+
+  try {
+    const url = TASK_URL + '?' + buildTaskParams().toString();
+    const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+    if (!res.ok) throw new Error(res.statusText);
+    const d = await res.json();
+
+    renderTaskCards(d);
+
+    // populate multiselects with any new clusters
+    if (d.available_clusters && d.available_clusters.length) msPopulate('cluster', d.available_clusters);
+
+    document.getElementById('t-ts').textContent = nowTime();
+  } catch (err) {
+    console.error('[tasks]', err);
+  }
+}
+
+/* ── helpers ────────────────────────────────────────────── */
+function nowTime() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+function animateBtn(btnId, iconId) {
+  const btn = document.getElementById(btnId);
+  btn.classList.add('spin');
+  setTimeout(() => btn.classList.remove('spin'), 800);
+}
+
+/* ── auto-refresh (independent per section) ─────────────── */
+setInterval(() => fetchBookings(false), AUTO_MS);
+setInterval(() => fetchTasks(false),    AUTO_MS);
+
+/* ── init ────────────────────────────────────────────────── */
+fetchBookings();
+fetchTasks();
+</script>
+{% endblock %}

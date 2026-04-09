@@ -1,0 +1,3 @@
+maktabiya-app: gunicorn --reload --config gunicorn-cfg.py
+maktabiya-tasks: python manage.py qcluster
+maktabiya-tasks-long: Q_CLUSTER_NAME=LongTasks python manage.py qcluster

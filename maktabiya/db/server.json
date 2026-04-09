@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Maktabiya PostgreSQL",
+      "Group": "Servers",
+      "Host": "maktabiya-db",
+      "Port": 5432,
+      "MaintenanceDB": "maktabiya",
+      "Username": "maktabiya",
+      "SSLMode": "prefer"
+    }
+  }
+}

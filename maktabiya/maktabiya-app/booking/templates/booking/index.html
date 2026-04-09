@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Maktabiya | MyDesk {% endblock %}
+{% block body %}
+    <div class="p-4">
+        <!-- Page header -->
+        <div class="desk-search-header">
+            <p class="greeting m-0">Hello, {{ request.user }}</p>
+            <h4>Find Your Desk</h4>
+        </div>
+
+        {% if messages %}
+        <div class="alert alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+                <div class="{% if message.tags %}{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+
+        <!-- Search form -->
+        <div class="search-card">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="row g-3 align-items-end">
+                    <div class="col-12 col-md-5">
+                        <label for="datepicker">Date</label>
+                        <input class="form-control" type="date" required id="datepicker" name="date"
+                               placeholder="YYYY-MM-DD" autocomplete="off"
+                               {% if not submitted %} value="" {% else %} value="{{ date }}" {% endif %}/>
+                    </div>
+                    <div class="col-12 col-md-5">
+                        <label for="office">Office</label>
+                        <select required class="form-control" id="office" name="office">
+                            <option {% if not submitted %} selected {% endif %} disabled value=""> Choose an office </option>
+                            {% for site in offices %}
+                                <option {% if office|slugify == site.name|slugify %} selected {% endif %} value="{{ site.id }}">{{ site.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <input type="submit" class="btn btn-outline-primary w-100" value="Search">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results -->
+        {% if submitted %}
+            <p class="results-label">
+                Available desks in <b>{{ office.name }}</b> for <b>{{ date }}</b>
+            </p>
+        {% endif %}
+
+        <div class="accordion" id="accordion">
+            {% for room in rooms %}
+                <div class="accordion-item">
+                    <div class="accordion-header d-flex">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#{{ room.id }}" aria-expanded="false" aria-controls="{{ room.id }}">
+                            {{ room.name }}
+                            &nbsp;<span>- {{ room.desks_empty }} available</span>
+                        </button>
+                    </div>
+                    <div id="{{ room.id }}" class="accordion-collapse collapse" data-bs-parent="#accordion">
+                        <div class="accordion-body">
+                            <div class="desks d-flex flex-wrap" style="row-gap: 1rem">
+                                {% for desk in room.desks.all %}
+                                    {% if desk in booked %}
+                                        <div class="{{ desk.id }} col-6 col-md-3">
+                                            <div class="desk-item booked" title="Booked">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                     stroke-width="1.5" stroke="currentColor"
+                                                     class="text-danger"
+                                                     style="cursor:not-allowed;">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/>
+                                                </svg>
+                                                {% for desk_booked in desk.booking_desk.all %}
+                                                    {% if desk_booked.booked_on|date:"Y-m-d" == date %}
+                                                        {% with user=desk_booked.user %}
+                                                        <p class="text-center mb-0">
+                                                            {% if user == request.user %}
+                                                                {{ user }} - me
+                                                            {% elif user.booking_visible %}
+                                                                {{ user }}
+                                                            {% else %}
+                                                                *****
+                                                            {% endif %}
+                                                        </p>
+                                                        {% endwith %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="{{ desk.id }} col-6 col-md-3">
+                                            <div class="desk-item available" title="Available – click to book">
+                                                <a class="nav-link p-0" hx-get="{% url 'booking:book' desk.id room.id office.id %}"
+                                                   hx-target="#dialog" hx-indicator=".overlay">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                         stroke-width="1.5" stroke="currentColor"
+                                                         style="cursor: pointer;">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                              d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"/>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- HTMX loading overlay -->
+    <div class="overlay htmx-indicator"></div>
+{% endblock %}
+
+{% block footer %}
+    <script src="{% static 'booking/js/booking.js' %}"></script>
+{% endblock %}
