@@ -24,19 +24,19 @@ Q_CLUSTER = {
     "workers": WORKERS,
     # how many times a task will be retried if it fails
     "max_attempts": 1,
-    # queue polling interval (in seconds) for database brokers
-    "poll": 2,
     # kill tasks after X seconds
     "timeout": 20,
     # time in seconds to wait before retrying a failed task
     "retry": 30,
-    "compress": True,
+    # queue polling interval (in seconds) for database brokers
+    "poll": 2,
     # 0 for unlimited
     "save_limit": 0,
     # Sets the number of processor each worker can use, requires psutil
     "cpu_affinity": 2,
     # don't run old task missed in the past
     "catch_up": False,
+    "compress": True,
     # multi qclusters queue
     "ALT_CLUSTERS": {
         Q_CLUSTER_LONG_QUEUE: {
