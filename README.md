@@ -16,6 +16,8 @@ A modern, scalable desk booking application built with Django. Maktabiya enables
 > **Note**: This is a demo application used for PyCon DE 2026 talk **"Django-Q2: Async Tasks Made Simple"**.  
 > Perfect for learning Django best practices, background task processing, and building scalable web applications.
 
+> Live Demo: https://aladin97.pythonanywhere.com/
+
 ---
 
 ## 📖 Table of Contents
