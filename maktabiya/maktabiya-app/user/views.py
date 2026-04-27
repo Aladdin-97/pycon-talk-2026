@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from user.forms import LoginForm, ProfileForm
 
 
@@ -42,12 +43,16 @@ def user_login(request):
 
         login(request, user)
         log.info(f"Log in successful: {username}")
-        if not next_url:
-            log.info("Redirecting to homepage index")
-            return redirect(reverse("booking:index"))
+        if next_url and url_has_allowed_host_and_scheme(
+            url=next_url,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        ):
+            log.info(f"Redirecting to the next url: {next_url}")
+            return redirect(next_url)
 
-        log.info(f"Redirecting to the next url: {next_url}")
-        return redirect(next_url)
+        log.info("Redirecting to homepage index")
+        return redirect(reverse("booking:index"))
 
     return render(request, "user/login.html", context)
 
