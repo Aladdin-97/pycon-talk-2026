@@ -10,10 +10,12 @@
 ![Django-Q2](https://img.shields.io/badge/django_q2-1.9.0-green?style=for-the-badge)
 ![Python](https://img.shields.io/badge/python-3.12-blue?style=for-the-badge)
 ![PyConTalkDE](https://img.shields.io/badge/PyCon-DE_2026-orange?style=for-the-badge)
+![PyConTalkIT](https://img.shields.io/badge/PyCon-IT_2026-violet?style=for-the-badge)
 
 A modern, scalable desk booking application built with Django. Maktabiya enables organizations to efficiently manage shared office spaces, book desks, and optimize workspace utilization with real-time availability, automated notifications, and a user-friendly interface.
 
-> **Note**: This is a demo application used for PyCon DE 2026 talk **"Django-Q2: Async Tasks Made Simple"**.  
+> **Note**: This is a demo application used for PyCon DE 2026 talk **"Django-Q2: Async Tasks Made Simple"** and PyCon IT 2026 talk **"Django-Q2: Simplifying Asynchronous Tasks and Cron Jobs in Django"**.
+
 > Perfect for learning Django best practices, background task processing, and building scalable web applications.
 
 > Live Demo: https://aladin97.pythonanywhere.com/
