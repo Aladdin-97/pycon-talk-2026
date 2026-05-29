@@ -9,7 +9,7 @@ APP_DESC = """Maktabiya ("مكتبية") derives from the word Maktab ("مكتب
 Maktabiya can be translated into English as MyDesk."""
 VERSION = env("APP_VERSION", default="Production")
 AUTHOR_URL = "https://github.com/Aladdin-97"
-APP_GITHUB_URL = "https://github.com/Aladdin-97/pycon-de-2026"
+APP_GITHUB_URL = "https://github.com/Aladdin-97/pycon-talk-2026"
 BADGE = f"{VERSION} Release".upper()
 MYBOOK_URL = f'http://{env("APP_DOMAIN", default="localhost:8000")}/{env("MYBOOK_URL", default="my-bookings")}'
 
