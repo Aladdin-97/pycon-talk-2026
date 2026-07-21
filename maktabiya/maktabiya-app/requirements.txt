@@ -15,7 +15,7 @@ django-widget-tweaks==1.5.1
 gunicorn==25.0.3
 honcho==2.0.0
 names_generator==0.2.0
-pillow==12.1.0
+pillow==12.3.0
 psutil==7.2.2
 psycopg==3.3.2
 psycopg-binary==3.3.2
