@@ -22,8 +22,16 @@ def user_login(request):
         return redirect("/")
     form = LoginForm()
     context = {"form": form}
-    # Check if the 'next' parameter is present in the request's GET parameters
-    next_url = request.GET.get("next")
+    # Check if the 'next' parameter is present and validate it before use
+    next_url = request.POST.get("next") or request.GET.get("next")
+    safe_next_url = None
+    if next_url and url_has_allowed_host_and_scheme(
+        url=next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        safe_next_url = next_url
+
     if request.method == "POST":
         form = LoginForm(request.POST)
         if not form.is_valid():
@@ -43,13 +51,9 @@ def user_login(request):
 
         login(request, user)
         log.info(f"Log in successful: {username}")
-        if next_url and url_has_allowed_host_and_scheme(
-            url=next_url,
-            allowed_hosts={request.get_host()},
-            require_https=request.is_secure(),
-        ):
-            log.info(f"Redirecting to the next url: {next_url}")
-            return redirect(next_url)
+        if safe_next_url:
+            log.info(f"Redirecting to the next url: {safe_next_url}")
+            return redirect(safe_next_url)
 
         log.info("Redirecting to homepage index")
         return redirect(reverse("booking:index"))
